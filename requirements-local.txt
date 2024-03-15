@@ -4,15 +4,15 @@ diffusers
 transformers
 accelerate
 basicsr
-facexlib
+# facexlib
 ipykernel
 ipywidgets
-gfpgan
-realesrgan
-numpy
-opencv-python
-Pillow
-torch -index-url https://download.pytorch.org/whl/nightly/rocm6.0
-torchvision -index-url https://download.pytorch.org/whl/nightly/rocm6.0
+# gfpgan
+# realesrgan
+# numpy
+# opencv-python
+# Pillow
+# torch -index-url https://download.pytorch.org/whl/nightly/rocm6.0
+# torchvision -index-url https://download.pytorch.org/whl/nightly/rocm6.0
 tqdm
-huggingface_hub=0.20.2
+huggingface_hub==0.20.2
