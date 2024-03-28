@@ -2,6 +2,15 @@ import torch
 import torch.nn as nn
 import math
 
+if torch.cuda.is_available():
+  device = torch.device('cuda')
+elif torch.backends.mps.is_available():
+  device = torch.device('mps')
+else:
+  device = torch.device('cpu')
+
+# device = torch.device('cpu')
+
 class MultiHeadAttention(nn.Module):
     def __init__(self, d_model, num_heads):
         super(MultiHeadAttention, self).__init__()
@@ -124,8 +133,8 @@ class Transformer(nn.Module):
         src_mask = (src != 0).unsqueeze(1).unsqueeze(2) # 64 * 1 * 1 * 100
         tgt_mask = (tgt != 0).unsqueeze(1).unsqueeze(3) # 64 * 1 * 100 * 1
         seq_length = tgt.size(1)
-        nopeak_mask = (1 - torch.triu(torch.ones(1, seq_length, seq_length), diagonal=1)).bool() # 1 * 100 * 100
-        print(tgt_mask, nopeak_mask)
+        nopeak_mask = (1 - torch.triu(torch.ones(1, seq_length, seq_length), diagonal=1)).bool().to(device) # 1 * 100 * 100
+        print(src_mask.device,tgt_mask.device,nopeak_mask.device)
         tgt_mask = tgt_mask & nopeak_mask # 64 * 1 * 100 * 100
         return src_mask, tgt_mask # [64, 1, 1, 100] [64, 1, 100, 100]
 
