@@ -26,9 +26,9 @@ class MultiHeadAttention(nn.Module):
         self.W_o = nn.Linear(d_model, d_model)
         
     def scaled_dot_product_attention(self, Q, K, V, mask=None):
-        attn_scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_k)
+        attn_scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_k) # (batch_size, num_heads, seq_length, seq_length)
         if mask is not None:
-            attn_scores = attn_scores.masked_fill(mask == 0, -1e9) # (batch_size, num_heads, seq_length, seq_length)
+            attn_scores = attn_scores.masked_fill(mask == 0, -1e9) # <pad> mask
         attn_probs = torch.softmax(attn_scores, dim=-1)
         output = torch.matmul(attn_probs, V)
         return output
@@ -130,6 +130,9 @@ class Transformer(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
     def generate_mask(self, src, tgt):
+        # assume src_seq_len == tgt_seq_len, use broadcast
+        # otherwise mask.shape = src_seq_len, tgt_seq_len
+        # final shape 64 * 1 * 100 * 100
         src_mask = (src != 0).unsqueeze(1).unsqueeze(2) # 64 * 1 * 1 * 100
         tgt_mask = (tgt != 0).unsqueeze(1).unsqueeze(3) # 64 * 1 * 100 * 1
         seq_length = tgt.size(1)
@@ -140,7 +143,7 @@ class Transformer(nn.Module):
 
     def forward(self, src, tgt):
         src_mask, tgt_mask = self.generate_mask(src, tgt) # [64, 1, 1, 100] [64, 1, 100, 100]
-        src_embedded = self.dropout(self.positional_encoding(self.encoder_embedding(src))) # [64, 100, 512]
+        src_embedded = self.dropout(self.positional_encoding(self.encoder_embedding(src))) # [batch_size, seq_length, d_model]
         tgt_embedded = self.dropout(self.positional_encoding(self.decoder_embedding(tgt))) # [64, 100, 512]
 
         enc_output = src_embedded
