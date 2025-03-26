@@ -1,9 +1,10 @@
 omegaconf
 einops
-diffusers
-transformers
+diffusers==0.32.2
+transformers==4.50.1
+numpy==1.26.4
 accelerate
-basicsr
+# basicsr
 # facexlib
 ipykernel
 ipywidgets
@@ -14,5 +15,5 @@ ipywidgets
 # Pillow
 # torch -index-url https://download.pytorch.org/whl/nightly/rocm6.0
 # torchvision -index-url https://download.pytorch.org/whl/nightly/rocm6.0
-tqdm
-huggingface_hub==0.20.2
+# tqdm
+# huggingface_hub==0.20.2
